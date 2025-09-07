@@ -1,0 +1,560 @@
+openapi: 3.0.3
+info:
+  title: eventos API
+  description: Event management platform API for MCP integration
+  version: 1.0.0
+servers:
+  - url: https://public-api.eventos.tokyo
+    description: Production API
+
+paths:
+  /token:
+    post:
+      summary: Get access token
+      operationId: getToken
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client_id
+                - client_secret
+                - grant_type
+              properties:
+                client_id:
+                  type: string
+                  description: OAuth client ID
+                client_secret:
+                  type: string
+                  description: OAuth client secret
+                grant_type:
+                  type: string
+                  enum: [client_credentials, refresh_token]
+                refresh_token:
+                  type: string
+                  description: Required when grant_type is refresh_token
+      responses:
+        '200':
+          description: Token generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /accounts:
+    get:
+      summary: List accounts
+      operationId: listAccounts
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, suspended]
+      responses:
+        '200':
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      summary: Create account
+      operationId: createAccount
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountInput'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /accounts/{accountId}:
+    get:
+      summary: Get account details
+      operationId: getAccount
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/accountIdParam'
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      summary: Update account
+      operationId: updateAccount
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/accountIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountInput'
+      responses:
+        '200':
+          description: Account updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete account
+      operationId: deleteAccount
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/accountIdParam'
+      responses:
+        '204':
+          description: Account deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tickets:
+    get:
+      summary: List tickets
+      operationId: listTickets
+      tags:
+        - Tickets
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - name: eventId
+          in: query
+          schema:
+            type: string
+          description: Filter by event ID
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, sold-out, cancelled]
+      responses:
+        '200':
+          description: List of tickets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ticket'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      summary: Create ticket
+      operationId: createTicket
+      tags:
+        - Tickets
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketInput'
+      responses:
+        '201':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket details
+      operationId: getTicket
+      tags:
+        - Tickets
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ticketIdParam'
+      responses:
+        '200':
+          description: Ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      summary: Update ticket
+      operationId: updateTicket
+      tags:
+        - Tickets
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ticketIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketInput'
+      responses:
+        '200':
+          description: Ticket updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      summary: Delete ticket
+      operationId: deleteTicket
+      tags:
+        - Tickets
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ticketIdParam'
+      responses:
+        '204':
+          description: Ticket deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: Number of items to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+    offsetParam:
+      name: offset
+      in: query
+      description: Number of items to skip
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+
+    accountIdParam:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    ticketIdParam:
+      name: ticketId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    Token:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          enum: [Bearer]
+        expires_in:
+          type: integer
+          description: Token expiry in seconds
+        scope:
+          type: string
+
+    Account:
+      type: object
+      required:
+        - id
+        - email
+        - name
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        phone:
+          type: string
+        organization:
+          type: string
+        role:
+          type: string
+          enum: [admin, organizer, attendee]
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AccountInput:
+      type: object
+      required:
+        - email
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        phone:
+          type: string
+        organization:
+          type: string
+        role:
+          type: string
+          enum: [admin, organizer, attendee]
+
+    Ticket:
+      type: object
+      required:
+        - id
+        - eventId
+        - type
+        - name
+        - price
+        - currency
+        - quantity
+        - available
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        eventId:
+          type: string
+        type:
+          type: string
+          enum: [general, vip, early-bird, group]
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        quantity:
+          type: integer
+          minimum: 1
+        available:
+          type: integer
+          minimum: 0
+        validFrom:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, sold-out, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TicketInput:
+      type: object
+      required:
+        - eventId
+        - type
+        - name
+        - price
+        - currency
+        - quantity
+      properties:
+        eventId:
+          type: string
+        type:
+          type: string
+          enum: [general, vip, early-bird, group]
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        quantity:
+          type: integer
+          minimum: 1
+        validFrom:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+
+    Error:
+      type: object
+      required:
+        - error
+        - code
+      properties:
+        error:
+          type: string
+        code:
+          type: integer
+        details:
+          type: object
+
+  responses:
+    BadRequestError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
