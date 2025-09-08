@@ -24,7 +24,7 @@ eventos APIと統合するためのModel Context Protocol (MCP)サーバー実�
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/your-username/eventos-mcp.git
+git clone https://github.com/bsj-m-takigawa/eventos-mcp.git
 cd eventos-mcp
 
 # 依存関係のインストール
