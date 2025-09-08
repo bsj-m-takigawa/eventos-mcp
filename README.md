@@ -40,7 +40,7 @@ npm run build
 
 ```env
 # eventos設定
-EVENTOS_TENANT=ev-kensho
+EVENTOS_TENANT=your-subdomain(今後指定のドメイン対応できるようにする/認証方式を変えてロールによって取得範囲が変わるとかも検討)
 EVENTOS_API_KEY=your-api-key-here
 EVENTOS_API_URL=https://public-api.eventos.tokyo
 ```
