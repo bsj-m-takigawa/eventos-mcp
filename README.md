@@ -165,6 +165,22 @@ eventos APIの認証を行い、アクセストークンを取得します。
 }
 ```
 
+### ユーザー管理
+
+#### `eventos_list_users`
+イベントに紐づくユーザー一覧を取得します。
+
+```json
+{
+  "name": "eventos_list_users",
+  "arguments": {
+    "event_id": "YOUR_EVENT_ID",
+    "per_page": 25,
+    "page": 1
+  }
+}
+```
+
 ## API仕様
 
 ### 認証方式

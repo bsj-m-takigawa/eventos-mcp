@@ -122,11 +122,19 @@ export type MCPToolName =
   | 'eventos_get_ticket'
   | 'eventos_create_ticket'
   | 'eventos_update_ticket'
-  | 'eventos_delete_ticket';
+  | 'eventos_delete_ticket'
+  | 'eventos_list_users';
 
 export interface MCPToolDefinition {
   name: MCPToolName;
   description: string;
   handler: (args: any) => Promise<MCPToolResponse>;
   inputSchema: object;
+}
+
+// Users tool args
+export interface ListUsersArgs {
+  event_id: string;
+  per_page?: number;
+  page?: number;
 }
