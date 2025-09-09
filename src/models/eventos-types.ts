@@ -52,6 +52,7 @@ export interface Venue {
   amenities?: string[];
 }
 
+// Simplified Ticket interface for internal use
 export interface Ticket {
   id: string;
   eventId: string;
@@ -67,6 +68,14 @@ export interface Ticket {
   status: 'active' | 'sold-out' | 'cancelled';
   createdAt: string;
   updatedAt: string;
+}
+
+// Actual API response structure for tickets
+export interface TicketResponse {
+  id: number;
+  common: TicketCommon;
+  language_data: TicketLanguageData[];
+  multiple_prices?: TicketMultiplePrice[];
 }
 
 export interface Registration {
@@ -93,6 +102,11 @@ export interface PaginationMeta {
 export interface ListResponse<T> {
   data: T[];
   meta?: PaginationMeta;
+}
+
+// Specific response for tickets list API
+export interface TicketListResponse {
+  tickets: TicketResponse[];
 }
 
 export interface ErrorResponse {

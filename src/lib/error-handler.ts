@@ -106,11 +106,12 @@ export class MCPErrorHandler {
    * Create success response
    */
   static createSuccessResponse<T>(data: T, message?: string): MCPToolResponse<T> {
+    const text = message ? `${message}\n\n${data}` : JSON.stringify(data);
     return {
       content: [
         {
           type: 'text',
-          text: message || JSON.stringify(data),
+          text,
         },
       ],
     };
