@@ -19,6 +19,7 @@ config();
 import { authToolDefinition } from '../tools/auth-tool.js';
 import { accountToolDefinitions } from '../tools/account-tools.js';
 import { ticketToolDefinitions } from '../tools/ticket-tools.js';
+import { chartToolDefinitions } from '../tools/chart-tool.js';
 
 // Validate environment variables
 function validateEnvironment(): void {
@@ -53,7 +54,12 @@ async function main() {
   );
 
   // Register all tools
-  const allTools = [authToolDefinition, ...accountToolDefinitions, ...ticketToolDefinitions];
+  const allTools = [
+    authToolDefinition,
+    ...accountToolDefinitions,
+    ...ticketToolDefinitions,
+    ...chartToolDefinitions,
+  ];
 
   // Register list tools handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -122,7 +128,12 @@ declare module '@modelcontextprotocol/sdk/server/index.js' {
 
 // Add methods to Server prototype for testing
 (Server.prototype as any).listTools = function () {
-  const tools = [authToolDefinition, ...accountToolDefinitions, ...ticketToolDefinitions];
+  const tools = [
+    authToolDefinition,
+    ...accountToolDefinitions,
+    ...ticketToolDefinitions,
+    ...chartToolDefinitions,
+  ];
 
   return tools.map((tool) => ({
     name: tool.name,
@@ -132,7 +143,12 @@ declare module '@modelcontextprotocol/sdk/server/index.js' {
 };
 
 (Server.prototype as any).callTool = async function (name: string, args: any) {
-  const allTools = [authToolDefinition, ...accountToolDefinitions, ...ticketToolDefinitions];
+  const allTools = [
+    authToolDefinition,
+    ...accountToolDefinitions,
+    ...ticketToolDefinitions,
+    ...chartToolDefinitions,
+  ];
 
   const tool = allTools.find((t) => t.name === name);
 
