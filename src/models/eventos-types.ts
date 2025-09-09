@@ -213,3 +213,43 @@ export interface TokenResponse {
   expires_in?: number;
   scope?: string;
 }
+
+// User listing types for /api/v1/user/list
+export interface UserProfileSelectorValue {
+  key: string;
+  value: string | number | null;
+}
+
+export interface UserShareProfileItem {
+  share_profile_id: number;
+  text_value: string | number | null;
+  selector_value: UserProfileSelectorValue[] | null;
+}
+
+export interface UserEventProfileItem {
+  event_profile_id: number;
+  text_value: string | number | null;
+  selector_value: UserProfileSelectorValue[] | null;
+}
+
+export interface UserProfiles {
+  share_profiles: UserShareProfileItem[];
+  event_profiles: UserEventProfileItem[];
+}
+
+export interface UserSummary {
+  user_id: number;
+  user_account_id: number;
+  account: string; // e.g., email
+  auth_method: string; // e.g., "Eventos"
+  user_qrcode: string | null;
+  external_qrcode: string | null;
+  profiles: UserProfiles;
+}
+
+export interface PagedUsersResponse {
+  total: number;
+  page: number;
+  per_page: number;
+  data: UserSummary[];
+}
